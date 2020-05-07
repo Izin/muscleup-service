@@ -2,54 +2,73 @@ version: '3'
 services:
 
   app:
+    container_name: app
     build:
-      context: .
+      context: ./app-service
       dockerfile: Dockerfile
     image: digitalocean.com/php
-    container_name: app
     restart: unless-stopped
     tty: true
-    environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
+    env_file:
+      ./app-service/.env
     working_dir: /var/www
     volumes:
-      - ./:/var/www
-      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./app-service/src/:/var/www
+      - ./app-service/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    depends_on:
+      - db
+      - webserver
     networks:
-      - app-network
+      - crudnet
 
   webserver:
-    image: nginx:alpine
     container_name: webserver
+    build: ./webserver-service
     restart: unless-stopped
     tty: true
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./:/var/www
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./app-service/src/:/var/www
+      - ./webserver-service/conf.d/:/etc/nginx/conf.d/
     networks:
-      - app-network
+      - crudnet
 
   db:
-    build: ./db-service
     container_name: db
+    build:
+      context: ./db-service
+      # args:
+      #   - DB_NAME=${DB_DATABASE}
+      #   - DB_ROOT_PASS=${DB_ROOT_PASS}
+      #   - DB_USER_NAME=${DB_USERNAME}
+      #   - DB_USER_PASS=${DB_PASSWORD}
+    # image: mariadb:10.4
     restart: unless-stopped
     tty: true
     ports:
       - "3306:3306"
     env_file:
       - ./db-service/.env
+    # environment:
+    #   - MYSQL_DATABASE=${DB_DATABASE}
+    #   - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASS}
+    command: mysqld
     volumes:
       - dbdata:/var/lib/mysql/
       - ./db-service/mysql.conf:/etc/mysql/my.cnf
     networks:
-      - app-network
+      - crudnet
+
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 888:8080
 
 networks:
-  app-network:
+  crudnet:
     driver: bridge
 volumes:
   dbdata:
