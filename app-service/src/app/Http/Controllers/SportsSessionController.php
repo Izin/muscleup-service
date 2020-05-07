@@ -26,7 +26,6 @@ class SportsSessionController extends Controller
      */
     public function index()
     {
-      StringFormatingHelper::formatDuration(2);
       $SportsSessions = SportsSession::all();
 
       return view('list', compact('SportsSessions'));
