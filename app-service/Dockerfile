@@ -1,8 +1,5 @@
 FROM php:7.2-fpm
 
-# Copy composer.lock and composer.json
-COPY ./src/composer.lock ./src/composer.json /var/www/
-
 # Set working directory
 WORKDIR /var/www
 
@@ -28,6 +25,11 @@ RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
 RUN docker-php-ext-install gd
 
+# Install Node.js (LTS)
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN apt-get install -y nodejs
+RUN node -v
+
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -35,11 +37,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 
-# Copy existing application directory contents
-COPY ./src/ /var/www
-
-# Copy existing application directory permissions
+# Copy existing application directory user access
 COPY --chown=www:www ./src/ /var/www
+
+# Increase permissions for storage and cache
+#RUN chmod -R 775 /var/www/storage
+#RUN chmod -R ug+rwx /var/www/storage /var/www//var/www/bootstrap/cache
 
 # Change current user to www
 USER www

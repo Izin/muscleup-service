@@ -6,7 +6,7 @@ A simple CRUD application. Keywords: PHP 7, Laravel, Eloquent, Bootstrap, Blade,
 ### Step 1. Configure
  - Find all the `.env.example` files
  - Copy each of them in the same directory with the name `.env`
- - Update their content according to your needs (mainly `DB_*` vars)
+ - Update their content accordingly to your needs (mainly `DB_*` vars)
 
 ### Step 2. Build
 - In a shell type the following commands:
@@ -29,8 +29,7 @@ docker-compose exec app bash
   # @see: https://stackoverflow.com/questions/42244541/laravel-migration-error-syntax-error-or-access-violation-1071-specified-key-wa#42245921
   # OR REMOVE the create_user migration in app-service/src/app/database/migrations
   php artisan ui bootstrap
-  npm install
-  npm run dev
+  npm install && npm run dev
   exit;
 ```
 
@@ -60,6 +59,10 @@ docker-compose exec app bash
   npm run production
   exit
 ```
+
+## @Todo
+ - seed the DB with default values when building this app
+ - test/mockup
 
 ## Knowledge
  - https://appdividend.com/2020/03/13/laravel-7-crud-example-laravel-7-tutorial-step-by-step/
