@@ -19,6 +19,12 @@ class SportsSessionController extends Controller
       'comment'           => 'string|min:0|max:1000',
     ];
 
+    const SUCCESS_MESSAGE = [
+      'create' => 'Sports session was successfully saved!',
+      'edit'   => 'Sports session was successfully updated!',
+      'delete' => 'Sports session was successfully deleted!',
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -62,7 +68,7 @@ class SportsSessionController extends Controller
       $show = SportsSession::create($validatedData);
 
       return redirect('/sessions')
-        ->with('success', 'Sports session was successfully saved!');
+        ->with('success', SUCCESS_MESSAGE['create']);
     }
 
     /**
@@ -104,7 +110,7 @@ class SportsSessionController extends Controller
       SportsSession::whereId($id)->update($validatedData);
 
       return redirect('/sessions')
-        ->with('success', 'Sports session was successfully updated!');
+        ->with('success', SUCCESS_MESSAGE['update']);
     }
 
     /**
@@ -119,6 +125,6 @@ class SportsSessionController extends Controller
         $SportsSession->delete();
 
         return redirect('/sessions')
-          ->with('success', 'Sports session was successfully deleted!');
+          ->with('success', SUCCESS_MESSAGE['delete']);
     }
 }
